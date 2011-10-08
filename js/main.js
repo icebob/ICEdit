@@ -212,6 +212,9 @@ function loadFileController() {
 }
 
 $(document).ready(function() {
+	$(window).resize(setWidthHeight);
+	setWidthHeight();
+
 	loadEditor();
 	loadFileBrowser();
 	loadFileController();
@@ -224,6 +227,12 @@ $(document).ready(function() {
 	}
 	iEdit.saveTimer = $.timer( 60 * 1000, iEdit.saveTimerTick);
 });
+
+function setWidthHeight() {
+	$("#pageBody").height($(window).height() - $("#pageBody").offset().top);
+	$("#mainPanel").width($(window).width() - $("#leftPanel").outerWidth());
+	$("#editor").height($(window).height() - $("#editor").offset().top);
+}
 
 //$(window).bind("onbeforeunload", iEdit.appCloseEvent);
 //$(window).bind("onunload", iEdit.appCloseEvent); 
