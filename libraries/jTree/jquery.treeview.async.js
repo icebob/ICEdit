@@ -51,8 +51,12 @@ function load(settings, root, child, container) {
 		},
 		success: function(response) {
 			child.empty();
-			$.each(response, createNode, [child]);
-	        $(container).treeview({add: child});
+			if (response.result == "ERROR")
+				alert(response.message);
+			else {
+				$.each(response, createNode, [child]);
+				$(container).treeview({add: child});
+			}
 	    }
 	}, settings.ajax));
 	/*

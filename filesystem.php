@@ -6,7 +6,46 @@
 	}	
 
 	include("config.php");
-
+	
+	$root = realpath($GLOBALS["root_directory"]);
+		
+	if (isset($_FILES["newfile"]))
+	{
+		//File upload
+		if ($_FILES["newfile"]["error"] > 0)
+		{
+			echo json_encode(array("result" => "ERROR", "message" => $_FILES["newfile"]["error"]));
+			exit;
+		}
+		else
+		{
+			$path = $root . DS. $_POST["_path"];
+			if (!checkValidPath($path))
+			{
+				echo json_encode(array("result" => "ERROR", "message" => "Invalid path!"));
+				exit;
+			}
+			
+			if (is_file($path))
+				$path = pathinfo($path, PATHINFO_DIRNAME);
+			$path .= DS;
+			
+			if (is_dir($path))
+			{
+				$target_path = $path .  basename( $_FILES['newfile']['name']);
+				if(@move_uploaded_file($_FILES['newfile']['tmp_name'], $target_path)) {
+				{
+					chmod($target_path, $GLOBALS["default_permission"]);
+					echo json_encode(array("result" => "OK", "path" => getRelativePath($root, $target_path)));
+				}
+				} else {
+					echo json_encode(array("result" => "ERROR", "message" => "File upload error! " . $target_path));
+				}
+			}	
+		}
+		exit;		
+	}	
+	
 	if (isset($_POST["func"]))
 	{
 		$func = $_POST["func"];
@@ -29,8 +68,9 @@
 	}
 	
 	function checkValidPath($filename) {
+		global $root;
 		$realpath = realpath($filename);
-		$pos = strpos($realpath, $GLOBALS["root_directory"]);
+		$pos = strpos($realpath, $root);
 		if ($pos === false)
 			return false;
 		else
@@ -38,9 +78,10 @@
 	}
 	
 	function RenameFileFolder() {
+		global $root;
 		if (isset($_POST["path"]) && isset($_POST["name"]))
 		{
-			$path = $GLOBALS["root_directory"] . DS . $_POST["path"];
+			$path = $root . DS . $_POST["path"];
 			$newName = $_POST["name"];
 			if (!checkFileName($newName) || !checkValidPath($path))
 			{
@@ -54,28 +95,30 @@
 			if (is_dir($path) || is_file($path))
 			{
 				rename($path, $basePath . DS . $newName);
-				echo json_encode(array("result" => "OK", "path" => getRelativePath($GLOBALS["root_directory"], $basePath . DS . $newName)));
+				echo json_encode(array("result" => "OK", "path" => getRelativePath($root, $basePath . DS . $newName)));
 			}
 		}
 	}
 	
 	function rrmdir($dir) { 
-	   if (is_dir($dir)) { 
-		 $objects = scandir($dir); 
-		 foreach ($objects as $object) { 
-		   if ($object != "." && $object != "..") { 
-			 if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object); 
-		   } 
-		 } 
-		 reset($objects); 
-		 rmdir($dir); 
-	   } 
+		global $root;
+   	    if (is_dir($dir)) { 
+		  $objects = scandir($dir); 
+		  foreach ($objects as $object) { 
+		    if ($object != "." && $object != "..") { 
+			  if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object); 
+		    }  
+		  } 
+		  reset($objects); 
+		  rmdir($dir); 
+	    } 
 	}	
 
 	function DeleteFileFolder() {
+		global $root;
 		if (isset($_POST["path"]))
 		{
-			$path = $GLOBALS["root_directory"] . DS. $_POST["path"];
+			$path = $root . DS. $_POST["path"];
 			if (!checkValidPath($path))
 			{
 				echo json_encode(array("result" => "ERROR", "message" => "Invalid path!"));
@@ -95,9 +138,10 @@
 	}	
 	
 	function LoadFile() {
+		global $root;
 		if (isset($_POST["filename"]))
 		{
-			$filename = $GLOBALS["root_directory"] . DS. $_POST["filename"];
+			$filename = $root . DS. $_POST["filename"];
 			if (file_exists($filename))
 			{
 				if (!checkValidPath($filename))
@@ -112,9 +156,10 @@
 	}
 	
 	function NewFolder() {
+		global $root;
 		if (isset($_POST["path"]) && isset($_POST["name"]))
 		{
-			$path = $GLOBALS["root_directory"] . DS. $_POST["path"];
+			$path = $root . DS. $_POST["path"];
 			$newName = $_POST["name"];
 			if (!checkFileName($newName) || !checkValidPath($path))
 			{
@@ -136,9 +181,10 @@
 	}
 
 	function NewFile() {
+		global $root;
 		if (isset($_POST["path"]) && isset($_POST["name"]))
 		{
-			$path = $GLOBALS["root_directory"] . DS. $_POST["path"];
+			$path = $root . DS. $_POST["path"];
 			$newName = $_POST["name"];
 			if (!checkFileName($newName) || !checkValidPath($path))
 			{
@@ -161,7 +207,7 @@
                 {
     				chmod($newFile, $GLOBALS["default_permission"]);
     				//chown($newFile, $GLOBALS["default_owner"]);
-    				echo json_encode(array("result" => "OK", "path" => getRelativePath($GLOBALS["root_directory"], $newFile)));
+    				echo json_encode(array("result" => "OK", "path" => getRelativePath($root, $newFile)));
                 }
 			}
 		}
@@ -170,9 +216,10 @@
 	}
 	
 	function SaveFile() {
+		global $root;
 		if (isset($_POST["path"]) && isset($_POST["content"]))
 		{
-			$path = $GLOBALS["root_directory"] . DS . $_POST["path"];
+			$path = $root . DS . $_POST["path"];
 			if (is_file($path))
 			{
 				if (!checkValidPath($path))
@@ -189,9 +236,10 @@
 	}	
 	
 	function SaveAsFile() {
+		global $root;
 		if (isset($_POST["path"]) && isset($_POST["name"]))
 		{
-			$path = $GLOBALS["root_directory"] . DS . $_POST["path"];
+			$path = $root . DS . $_POST["path"];
 			$newName = $_POST["name"];
 			
 			if (is_file($path))
@@ -219,7 +267,7 @@
                 {
     				chmod($newFile, $GLOBALS["default_permission"]);
     				//chown($newFile, $GLOBALS["default_owner"]);
-    				echo json_encode(array("result" => "OK", "path" => getRelativePath($GLOBALS["root_directory"], $newFile)));
+    				echo json_encode(array("result" => "OK", "path" => getRelativePath($root, $newFile)));
                 }
 			}
 		}
@@ -227,22 +275,21 @@
 	
 	function GenerateFileList()
 	{
-		$path = $GLOBALS["root_directory"]. DS;
+		global $root;
+		$path = $root. DS;
 		if (isset($_POST["root"]) && ($_POST["root"] != "source" && $_POST["root"] != DS))
 			$path .=  $_POST["root"] . DS; 
 		
 		if (!checkValidPath($path))
 		{
-			echo json_encode(array("text" => "Invalid path!"));
-//			echo json_encode(array("text" => "Invalid path!", "path" => $path, "root" => $GLOBALS["root_directory"]));
+			echo json_encode(array("result" => "ERROR", "message" => "Invalid path! " . $root));
 			exit;
 		}
 		
 		//header('Content-type: application/json');
-		$root = array(
+		$rootfolder = array(
 			"text" => "/",
 			"expanded" => true,
-			//"hasChildren" => false,
 			"id" => "/",
 			"classes" => "folder"
 		);
@@ -254,7 +301,7 @@
 		{
 			$file = $files[$i];
 			$fullpath = $path . $file;
-			$relpath = getRelativePath($GLOBALS["root_directory"], $path . $file);
+			$relpath = getRelativePath($root, $path . $file);
 			if ($file == "." || $file == "..") continue;
 			if (is_dir($fullpath))
 			{
@@ -272,7 +319,7 @@
 		{
 			$file = $files[$i];
 			$fullpath = $path . $file;
-			$relpath = getRelativePath($GLOBALS["root_directory"], $path . $file);
+			$relpath = getRelativePath($root, $path . $file);
 			if ($file == "." || $file == "..") continue;
 			$webPath = $GLOBALS["web_root"] . DS . $relpath;
 			$icon = "file";
@@ -284,16 +331,19 @@
 					"id" => $relpath,
 					"classes" => $icon,
 					"hint" => getFileTip($fullpath),
-					"webPath" =>  $webPath
+					"webPath" =>  $webPath,
+					"root" => $root
 				);
 			}
 		}
 		
 		if ($_POST["root"] == "source")
 		{
+			chmod($root, $GLOBALS["default_permission"]);
+			
 			if (count($result) > 0)
-				$root["children"] = $result;
-			echo json_encode(array($root));
+				$rootfolder["children"] = $result;
+			echo json_encode(array($rootfolder));
 		}
 		else
 			echo json_encode($result);
