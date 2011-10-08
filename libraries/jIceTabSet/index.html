@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" href="jIceTabSet.css"  type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+    <script src="jIceTabSet.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var valami = $("#tabTest").jIceTabSet({
+                tabWidth: 200,
+                onchanged: function(tab) {
+                   //alert(tab.title); 
+                    
+                },
+                onclosable: function(tab) {
+                    return confirm('bezárod a ' + tab.title + '-t?');
+                },
+                onclosed: function(tab) {
+                    alert('Bezártad a ' + tab.title);
+                    
+                },
+                onchangeable: function(oldTab, newTab) {
+                    //if (oldTab)
+                    //    return confirm("biztos átváltasz a " + oldTab.title + '-ról a ' + newTab.title + '-re?');
+                    //else
+                        return true;
+                    
+                },
+                tabs: [{
+        			title: 'valami',
+                    hint: 'Valami hint',
+					id: 1,
+                    icon: "images/php-icon.png"
+				},{
+        			title: 'valami 2',
+					id: 2,
+                    icon: "images/html-icon.png"
+				},{
+        			title: 'valami 3',
+					id: 3,
+                    icon: "images/js-icon.png"
+				}]
+            });
+            
+            var a = $("#tabTest").data('tabs');
+            
+            a.addTab({title: 'valami 4', id: 4, icon:"images/css-icon.png"});
+            a.addTab({title: 'valami 5', id: 5});
+            a.addTab({title: 'valami 6', id: 6});
+            a.setTitle(a.getTabByID(2), 'lofasz');
+            a.setActive(a.getTabByID(1));
+        });
+    </script>
+
+</head>
+<body style="background-color: rgba(225,230,234,1)">
+    <div id="tabTest" class="tabContainer">
+    </div>
+    
+    
+</body>
+</html>

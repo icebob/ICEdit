@@ -1,0 +1,149 @@
+.tabContainer {
+    margin: 0;
+    height: 25px;
+    padding-top: 5px;
+	overflow: hidden;
+    
+    font-family: Verdana, Geneva, Arial, sans-serif;
+	font-size: small;   
+	
+	/*border-bottom: 1px solid #AAA;*/
+	
+    background: rgb(176,189,200); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(176,189,200,1) 0%, rgba(176,189,200,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(176,189,200,1)), color-stop(100%,rgba(176,189,200,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(176,189,200,1) 0%,rgba(176,189,200,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(176,189,200,1) 0%,rgba(176,189,200,1) 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, rgba(176,189,200,1) 0%,rgba(176,189,200,1) 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b0bdc8', endColorstr='#b0bdc8',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, rgba(176,189,200,1) 0%,rgba(176,189,200,1) 100%); /* W3C */
+}
+
+.tabContainer ul {
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	width: 5000px;
+}
+
+.tabScroller {
+    float: right;
+    width: 40px;
+}
+
+.tabItem {
+	margin: 0px 2px;
+	padding: 5px 5px;
+	float: left;
+	overflow: hidden;
+	height: 16px;
+	list-style: none;
+	cursor: pointer;
+	position: relative;
+	
+	border: 1px solid #AAA;
+	border-bottom: 0px;
+	
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	-moz-border-radius-bottomright: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-radius: 10px 10px 0px 0px;
+	border-radius: 10px 10px 0px 0px;	
+
+    background: rgb(120,144,161); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(120,144,161,1) 0%, rgba(120,144,161,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(120,144,161,1)), color-stop(100%,rgba(120,144,161,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(120,144,161,1) 0%,rgba(120,144,161,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(120,144,161,1) 0%,rgba(120,144,161,1) 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, rgba(120,144,161,1) 0%,rgba(120,144,161,1) 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7890a1', endColorstr='#7890a1',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, rgba(120,144,161,1) 0%,rgba(120,144,161,1) 100%); /* W3C */
+
+	font-size: 10px;
+	
+	color: #EEE;
+}
+
+.tabItem span{
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+    white-space:nowrap;
+}
+
+.tabItem:hover {
+	color: #D7E9FF; 
+}
+
+.tabItem-active {
+	font-weight: bold;
+	color: #000;
+    
+
+    background: rgb(247,249,251); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(247,249,251,1) 0%, rgba(225,230,234,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(247,249,251,1)), color-stop(100%,rgba(225,230,234,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(247,249,251,1) 0%,rgba(225,230,234,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(247,249,251,1) 0%,rgba(225,230,234,1) 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, rgba(247,249,251,1) 0%,rgba(225,230,234,1) 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f9fb', endColorstr='#e1e6ea',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, rgba(247,249,251,1) 0%,rgba(225,230,234,1) 100%); /* W3C */    
+}
+
+.tabItem-active:hover {
+    color: #002E66; 
+}
+
+
+.tabItemIcon {
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	left: 5px;
+	top: 4px;
+}
+
+.tabItemCloseButton {
+	background-image: url('images/close_16.png');
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	right: 5px;
+	top: 4px;
+	opacity: 0.4;
+}
+
+.tabItemCloseButton:hover {
+	opacity: 1;
+}
+
+.tabLeftScrollButton {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAUUlEQVR4nGNgGP6gq6vrPz55JnyS+fn5/58+fYrXApwG5Ofn47UZBhjJ0Txx4kS4PgwXEGszTgOQTScG4FSM7BJ8huIMRFJdghMQSgejgIEBACKEGkICMAPGAAAAAElFTkSuQmCC);
+	width: 16px;
+	height: 16px;
+    margin-top: 3px;
+    margin-left: 2px;    
+    float: left;
+	opacity: 0.6;
+	display: none;
+}
+.tabRightScrollButton {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAATklEQVR4nGNgGP6gq6vrPz55JkIGPH36lCE/Px+nIQQNgAFchjASqxAGJk6ciKKHaBfgsoBkA9BdgOEFfDaiaybJBdg0EwUIpYNRwMAAAEAVGkL0XRW6AAAAAElFTkSuQmCC);
+	width: 16px;
+	height: 16px;
+    margin-top: 3px;
+    margin-right: 2px;    
+    float: right;
+	opacity: 0.6;
+	display: none;
+}
+
+#tabLeftScrollButton:hover, #tabRightScrollButton:hover {
+	opacity: 0.8;
+	background-color: #EEE;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;	
+}
