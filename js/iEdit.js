@@ -16,23 +16,24 @@ iEdit.refreshFolder = function(path, forceParent) {
 	var rows = $("#fileBrowser li");
 	var row = null;
 	$.each(rows, function(i, item) {
-		if ($(item).attr('id') == path)
+		if ($(item).attr('id') == path) 
 		{
 			row = $(item);
 			return false;
 		}
 	});
-	if (row != null)
+	if (row !== null)
 	{
+        var folder = null;
 		if ((row.find("ul").length > 0) && (!forceParent))
-			var folder = row;
+			folder = row;
 		else
-			var folder = row.parent().parent();
+			folder = row.parent().parent();
 		folder.find('>span').click();
 		folder.attr('class', 'hasChildren collapsable');
 		folder.find('>span').click();
 	}
-}
+};
 
 iEdit.createFolder = function(hoverFile) {
 	var path = hoverFile.parent().attr('id');
@@ -54,7 +55,7 @@ iEdit.createFolder = function(hoverFile) {
 			} else alert(data.message);
 		});
 	}
-}
+};
 
 iEdit.createFile = function(hoverFile) {
 	var path = hoverFile.parent().attr('id');
@@ -77,16 +78,17 @@ iEdit.createFile = function(hoverFile) {
 			} else alert(data.message);
 		});
 	}
-}
+};
 
 iEdit.saveFile = function(hoverFile) {
-	if (typeof(hoverFile) == "string")
-		var path = hoverFile;
+	var path;
+    if (typeof(hoverFile) == "string")
+		path = hoverFile;
 	else
-		var path = hoverFile.parent().attr('id');
+		path = hoverFile.parent().attr('id');
 		
 	var tab = iEdit.tabs.getTabByID(path);
-	if (tab != null && tab.file.changed)
+	if (tab !== null && tab.file.changed)
 	{
 		iEdit.ShowProgressDialog("Saving file...", tab.file.filename);
 		if (tab == iEdit.tabs.selectedTab && tab.file.changed)
@@ -103,7 +105,7 @@ iEdit.saveFile = function(hoverFile) {
 			data = jQuery.parseJSON(data);
 			if (data && data.result == "OK")
 			{
-				if (tab != null)
+				if (tab !== null)
 				{
 					tab.file.localCache = false;
 					iEdit.fileChanged(tab, false);
@@ -112,20 +114,21 @@ iEdit.saveFile = function(hoverFile) {
 			} else alert(data.message);
 		});
 	}
-}
+};
 
 iEdit.saveAll = function() {
 	$.each(iEdit.tabs.items, function(i, tab) {
 		if (tab.file.changed)
 			iEdit.saveFile(tab.file.path);
 	});
-}
+};
 
 iEdit.saveAsFile = function(hoverFile) {
-	if (typeof(hoverFile) == "string")
-		var path = hoverFile;
+	var path;
+    if (typeof(hoverFile) == "string")
+		path = hoverFile;
 	else
-		var path = hoverFile.parent().attr('id');
+		path = hoverFile.parent().attr('id');
 
 	var newName = prompt("Enter the new filename");
 	if (newName)
@@ -139,7 +142,7 @@ iEdit.saveAsFile = function(hoverFile) {
 		};
 		
 		var tab = iEdit.tabs.getTabByID(path);
-		if (tab != null && tab.file.changed)
+		if (tab !== null && tab.file.changed)
 		{
 			if (tab == iEdit.tabs.selectedTab)
 				tab.file.content = iEdit.editor.getSession().getValue();
@@ -152,7 +155,7 @@ iEdit.saveAsFile = function(hoverFile) {
 			data = jQuery.parseJSON(data);
 			if (data && data.result == "OK")
 			{
-				if (tab != null)
+				if (tab !== null)
 				{
 					iEdit.removeFromStorage(tab.file);
 					tab.file.path = data.path;
@@ -166,7 +169,7 @@ iEdit.saveAsFile = function(hoverFile) {
 			} else alert(data.message);
 		});
 	}
-}
+};
 
 iEdit.renameFileFolder = function(hoverFile) {
 	var path = hoverFile.parent().attr('id');
@@ -194,7 +197,7 @@ iEdit.renameFileFolder = function(hoverFile) {
 				iEdit.refreshFolder(path, true);
 				//rename the exists tab
 				var tab = iEdit.tabs.getTabByID(path);
-				if (tab != null)
+				if (tab !== null)
 				{
 					iEdit.removeFromStorage(tab.file);
 					tab.file.path = data.path;
@@ -206,7 +209,7 @@ iEdit.renameFileFolder = function(hoverFile) {
 			} else alert(data.message);
 		});
 	}
-}
+};
 
 iEdit.deleteFileFolder = function(hoverFile) {
 	var path = hoverFile.parent().attr('id');
@@ -232,21 +235,22 @@ iEdit.deleteFileFolder = function(hoverFile) {
 			{
 				//close tab
 				var tab = iEdit.tabs.getTabByID(path);
-				if (tab != null)
+				if (tab !== null)
 					iEdit.tabs.closeTab(tab, true);
 				iEdit.refreshFolder(hoverFile.parent().parent().parent().attr('id'));
 			} else alert(data.message);
 		});
 	}
-}
+};
 
 iEdit.reloadFile = function(hoverFile) {
-	if (typeof(hoverFile) == "string")
-		var path = hoverFile;
+	var path;
+    if (typeof(hoverFile) == "string")
+		path = hoverFile;
 	else
-		var path = hoverFile.parent().attr('id');
+		path = hoverFile.parent().attr('id');
 	var tab = iEdit.tabs.getTabByID(path);
-	if (tab != null && (tab.file.changed || tab.file.localCache))
+	if (tab !== null && (tab.file.changed || tab.file.localCache))
 	{
 		if (!tab.file.changed || confirm("File is changed! Do you want to reload?"))
 		{
@@ -256,7 +260,7 @@ iEdit.reloadFile = function(hoverFile) {
 
 		}
 	}
-}
+};
 
 iEdit.openInBrowser = function(hoverFile) {
 	var treeItem = null;
@@ -274,7 +278,7 @@ iEdit.openInBrowser = function(hoverFile) {
 		treeItem = hoverFile.parent();
 		
 	window.open(treeItem.data('data').webPath); 
-}
+};
 
 
 iEdit.LoadFile = function(fullpath, callback) {
@@ -289,7 +293,7 @@ iEdit.LoadFile = function(fullpath, callback) {
 			}, function(data) {
 				var newFile = iEdit.files.add(fullpath, data);
 				newFile.localCache = false;
-        	    var tab = {
+                var tab = {
 					title: newFile.filename,
 					id: newFile.path,
 					icon: newFile.icon,
@@ -304,11 +308,11 @@ iEdit.LoadFile = function(fullpath, callback) {
 		);				
 	} else {
 		var tab = iEdit.tabs.getTabByID(fullpath);
-		if (tab != null)
+		if (tab !== null)
 			iEdit.tabs.setActive(tab);
 	}
 
-}
+};
 
 iEdit.LoadFileFromStorage = function(item, loadContent) {
 	if (loadContent) {
@@ -344,7 +348,7 @@ iEdit.LoadFileFromStorage = function(item, loadContent) {
 		});
 		
 	}
-}
+};
 
 iEdit.callServer = function(data, callback) {
 	$.ajax({
@@ -355,9 +359,13 @@ iEdit.callServer = function(data, callback) {
 		async: !iEdit.loadingState,
 		success: function(data) {
 			callback(data);
-		}
+		},
+        error: function() {
+            callback(null);
+        }
+        
 	});
-}
+};
 
 iEdit.ShowProgressDialog = function(Caption, Msg)
 {
@@ -370,7 +378,7 @@ iEdit.ShowProgressDialog = function(Caption, Msg)
 	progress.html("<b>" + Caption + "</b><br/>" + Msg);
 //	progress.appendTo("body").slideDown("fast");
 	progress.appendTo("body").show();
-}
+};
 
 iEdit.CloseProgressDialog = function()
 {
@@ -378,7 +386,7 @@ iEdit.CloseProgressDialog = function()
 		$("#ProgressDialog").remove();
 	//});
 	$("#ProgressOverlay").remove();
-}
+};
 
 iEdit.fileChanged = function(tab, changed) {
 	var prefix = (tab.file.localCache)?"(local) ":"";
@@ -388,17 +396,17 @@ iEdit.fileChanged = function(tab, changed) {
 	else
 		iEdit.tabs.setTitle(tab, prefix + tab.file.filename);
 	
-}
+};
 
 iEdit.saveContent = function(file, content) {
 	file.content = content;
-	if (iEdit.loadingTab == false)
+	if (iEdit.loadingTab === false)
 	{
 		file.cursor = iEdit.editor.getCursorPosition();
 		file.scrollTop = iEdit.editor.renderer.getScrollTopRow();
 	}
 	this.saveToStorage(file);
-}
+};
 
 iEdit.saveToStorage = function(file) {
 	if (iEdit.storage)
@@ -408,7 +416,7 @@ iEdit.saveToStorage = function(file) {
 		
 		iEdit.storage.setObject("iEdit." + file.path, copiedObject);
 	}
-}
+};
 
 iEdit.loadStateFromStorage = function() {
 	iEdit.ShowProgressDialog("Loading last state...");
@@ -432,7 +440,7 @@ iEdit.loadStateFromStorage = function() {
 					scrollTop: item.scrollTop
 				});
 			} else
-				var activeTab = iEdit.storage.getObject(key);
+				activeTab = iEdit.storage.getObject(key);
 			
 		}
 		iEdit.storage.clear();
@@ -440,21 +448,21 @@ iEdit.loadStateFromStorage = function() {
 			iEdit.LoadFileFromStorage(item, true);
 		});
 		
-		if (iEdit.tabs.items.length > 0 && activeTab != null) {
+		if (iEdit.tabs.items.length > 0 && activeTab !== null) {
 			var tab = iEdit.tabs.getTabByID(activeTab);
-			if (tab != null)
+			if (tab !== null)
 				iEdit.tabs.setActive(tab);
 		}
 	}
 	iEdit.loadingState = false;
 	iEdit.CloseProgressDialog();
-}		
+};		
 
 iEdit.removeFromStorage = function(file) {
 	if (iEdit.storage)
 	iEdit.storage.removeObject("iEdit." + file.path);
 
-}
+};
 
 iEdit.uploadFileForm = function(hoverFile) {
 	var _path = hoverFile.parent().attr('id');
@@ -462,7 +470,7 @@ iEdit.uploadFileForm = function(hoverFile) {
 	if (hoverFile.hasClass("folder"))
 		path += "/";
 	path = ExtractFilePath(path);
-	if (path == "")
+	if (path === "")
 		path += "/";
 	var uploadDiv = $("#uploaderForm");
 	uploadDiv.find("#path").val(path);
@@ -474,7 +482,7 @@ iEdit.uploadFileForm = function(hoverFile) {
 			'onStart': iEdit.uploadFileStart, 
 			'onComplete' : function(data) {
 				iEdit.CloseProgressDialog();
-				if (data && data != "")
+				if (data && data !== "")
 				{
 					data = jQuery.parseJSON(data);
 					if (data && data.result == "OK")
@@ -491,19 +499,19 @@ iEdit.uploadFileForm = function(hoverFile) {
 	uploadDiv.find("#cancelButton").unbind("click").bind("click", function() {
 		uploadDiv.slideUp("fast");
 	});
-}
+};
 iEdit.uploadFileStart = function() {
 	$("#uploaderForm").slideUp("fast");
 	iEdit.ShowProgressDialog("Uploading file...", $("#uploaderForm #newfile").val());
-}
+};
 
 iEdit.saveTimerTick = function() {
 	if (iEdit.tabs.selectedTab)
 		iEdit.saveContent(iEdit.tabs.selectedTab.file, iEdit.editor.getSession().getValue());
-}
+};
 
 iEdit.appCloseEvent = function() {
 	iEdit.saveTimerTick();
 	return true;
-}
+};
 
