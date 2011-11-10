@@ -11,6 +11,7 @@ function loadEditor() {
 	iEdit.CssMode = require("ace/mode/css").Mode;
 	iEdit.HtmlMode = require("ace/mode/html").Mode;
 	iEdit.JavaScriptMode = require("ace/mode/javascript").Mode;
+	iEdit.CoffeeScriptMode = require("ace/mode/coffee").Mode;
 	iEdit.JsonMode = require("ace/mode/json").Mode;
 	iEdit.PhpMode = require("ace/mode/php").Mode;
 	iEdit.XmlMode = require("ace/mode/xml").Mode;

@@ -33,6 +33,11 @@ iFileController = function () {
 					icon = "images/js-icon.png";
 					break;
 				}
+				case "coffee": {
+					cMode = new iEdit.CoffeeScriptMode(); 
+					icon = "images/coffee-icon.png";
+					break;
+				}
 				case "php": {
 					cMode = new iEdit.PhpMode(); 
 					icon = "images/php-icon.png";
