@@ -430,6 +430,8 @@ iEdit.loadStateFromStorage = function() {
 			var key = localStorage.key(i);
 			if (key != "activeTab")
 			{
+			    if (key.substr(0, 6) === "iEdit.")
+			    {
 				var item = iEdit.storage.getObject(key);
 				preFiles.push({
 					path: item.path,
@@ -439,6 +441,7 @@ iEdit.loadStateFromStorage = function() {
 					cursor: $.extend({}, item.cursor || {}),
 					scrollTop: item.scrollTop
 				});
+			    }
 			} else
 				activeTab = iEdit.storage.getObject(key);
 			
