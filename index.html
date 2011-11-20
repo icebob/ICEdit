@@ -41,7 +41,7 @@
 <body onunload="return iEdit.appCloseEvent();">
 	<div id="menuBar">
 		<div id="logoDiv"><a href="https://sourceforge.net/projects/icedit/" target="_blank">ICEdit</a></div>
-		<div id="mottoDiv">an open source web-based IDE</div>
+		<div id="mottoDiv">v1.1b - an open source web-based IDE</div>
 	</div>
 	<div id="pageBody">
 		<div id="leftPanel">
@@ -53,6 +53,57 @@
 			</div>
 			<div id="editor"></div>
         </div>
+	</div>
+	<div id="snippetForm">
+		<div id="snippetList">
+			<select id="cbSnippets" value="" size="6">
+			</select>
+		
+		</div>
+		<div id="snippetDiv">
+			<table>
+				<tr>
+					<td style="width: 250px">
+						<label for="cbMode">Mode</label>
+						<select id="cbMode" value="">
+							<option value="">Global</option>
+							<option value="TextMode">Text</option>
+							<option value="CssMode">CSS</option>
+							<option value="HtmlMode">HTML</option>
+							<option value="JavaScriptMode">Javascript</option>
+							<option value="JsonMode">JSON</option>
+							<option value="CoffeeScriptMode">CoffeeScript</option>
+							<option value="PhpMode">PHP</option>
+							<option value="XmlMode">XML</option>
+						</select>
+					</td>
+					<td>
+						<label for="eName">Name</label>
+						<input type="text" name="eName" id="eName" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<textarea id="eContent" name="eContent"></textarea>
+					</td>
+				</tr>
+				</tr>
+				<tr>
+					<td>
+						<input type="button" id="btnSave" name="btnSave" value="Save"></input>
+						<input type="button" id="btnNew" name="btnNew" value="New"></input>
+						<input type="button" id="btnDelete" name="btnDelete" value="Delete"></input>
+						<input type="button" id="btnCancel" name="btnCancel" value="Close"></input>
+					</td>
+					<td>
+						<label for="eTargetRow">Cursor row</label>
+						<input type="number" id="eTargetRow" name="eTargetRow" value="-1"></input>
+						<label for="eTargetCol">Cursor column</label>
+						<input type="number" id="eTargetCol" name="eTargetCol" value="-1"></input>
+					</td>
+				</tr>
+			</table>
+		</div>	
 	</div>
 	<div id="uploaderForm">
 		<form action="filesystem.php" method="post" enctype="multipart/form-data" >

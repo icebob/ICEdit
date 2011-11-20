@@ -9,8 +9,60 @@ var iEdit = {
 	showingTabContextMenu: false,
 	loadingTab: false,
 	loadingState: false,
-	storage: null
+	storage: null,
+	snippets: []
 };
+
+iEdit.checkSnippets = function(text, mode) {
+	var res = null;
+	for (var i = 0; i < iEdit.snippets.length; i++)
+		if (iEdit.snippets[i].id === text && (iEdit.snippets[i].mode == iEdit.tabs.selectedTab.file.modeName))
+			res = iEdit.snippets[i];
+			
+	if (res == null)
+	{
+		//search global snippet
+		for (var i = 0; i < iEdit.snippets.length; i++)
+			if (iEdit.snippets[i].id === text && (iEdit.snippets[i].mode == ""))
+				res = iEdit.snippets[i];
+	}
+	
+	if (res)
+	{
+		iEdit.editor.removeWordLeft();
+		var beforePos = iEdit.editor.getCursorPosition();
+		
+		//get current line indent
+        var line = iEdit.editor.getSession().doc.getLine(beforePos.row);		
+		var indent = "";
+		if (line.trim() === "")
+			indent = line;
+		else
+		{
+			var startIndex = line.search(/\w/);
+			if (startIndex != -1)
+				indent = line.substr(0, startIndex - 1);
+		}
+		
+		var lines = res.content.split("\n");
+		var newLines = "";
+		for(var j = 0; j < lines.length; j++)
+		{
+			if (j != 0)
+				newLines += indent;
+			newLines += lines[j];
+			if (j < lines.length - 1) 
+				newLines += "\n";
+		}
+		iEdit.editor.insert(newLines);
+		if (res.cursor && res.cursor.row != -1 && res.cursor.column != -1) {
+			iEdit.editor.moveCursorTo(beforePos.row + parseInt(res.cursor.row, 10), beforePos.column + parseInt(res.cursor.column, 10));
+		}
+		
+		return true;
+	} else
+		return false;
+}
 
 iEdit.refreshFolder = function(path, forceParent) {
 	var rows = $("#fileBrowser li");
@@ -296,6 +348,7 @@ iEdit.LoadFile = function(fullpath, callback) {
                 var tab = {
 					title: newFile.filename,
 					id: newFile.path,
+					hint: newFile.path,
 					icon: newFile.icon,
 					file: newFile
 				};
@@ -326,6 +379,7 @@ iEdit.LoadFileFromStorage = function(item, loadContent) {
 	var tab = {
 		title: filename,
 		id: item.path,
+		hint: item.path,
 		icon: item.icon,
 		file: newFile
 	};
@@ -503,6 +557,147 @@ iEdit.uploadFileForm = function(hoverFile) {
 		uploadDiv.slideUp("fast");
 	});
 };
+
+iEdit.showSnippetForm = function() {
+	var snippetForm = $("#snippetForm");
+	
+	var list = snippetForm.find("#cbSnippets");
+	var loadList = function() {
+		list.empty();
+		$.each(iEdit.snippets, function(i, item) {
+			var sMode = "Global";
+			switch(item.mode)
+			{
+				case "TextMode": sMode = "Text"; break;
+				case "CssMode": sMode = "CSS"; break;
+				case "HtmlMode": sMode = "HTML"; break;
+				case "JavaScriptMode": sMode = "Javascript"; break;
+				case "JsonMode": sMode = "JSON"; break;
+				case "CoffeeScriptMode": sMode = "CoffeeScript"; break;
+				case "PhpMode": sMode = "PHP"; break;
+				case "XmlMode": sMode = "XML"; break;
+			}
+		
+			var str = "[" + sMode + "] - " + item.id;
+			list.append("<option value=" + i + ">" + str + "</option>");
+		});
+	}
+	loadList();
+	list.unbind("change").bind("change", function() {
+		var item = iEdit.snippets[list.val()];
+		snippetForm.find("#snippetID").val(list.val());
+		snippetForm.find("#cbMode").val(item.mode);
+		snippetForm.find("#eName").val(item.id);
+		snippetForm.find("#eContent").val(item.content);
+		
+		snippetForm.find("#eTargetRow").val(item.cursor.row);
+		snippetForm.find("#eTargetCol").val(item.cursor.column);
+	});
+		
+	snippetForm.find('#eContent').unbind("keydown").keydown(function (e) {
+		//Handle TAB char
+		if (e.keyCode == 9) {
+		
+			var myValue = "\t";
+			var startPos = this.selectionStart;
+			var endPos = this.selectionEnd;
+			var scrollTop = this.scrollTop;
+			this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos,this.value.length);
+			this.focus();
+			this.selectionStart = startPos + myValue.length;
+			this.selectionEnd = startPos + myValue.length;
+			this.scrollTop = scrollTop;
+
+			e.preventDefault();
+		}
+	});		
+		
+	snippetForm.find("#btnDelete").unbind("click").bind("click", function() {
+		if (confirm("Do you want to delete the snippet?"))
+		{
+			var id = snippetForm.find("#eName").val();
+			var mode = snippetForm.find("#cbMode").val();
+			iEdit.callServer({
+				func: "deleteSnippet",
+				id: id,
+				mode: mode}, function(data) {
+					LoadSnippets(function() {
+						loadList();
+					});
+				});
+		}
+	});
+
+	snippetForm.find("#btnSave").unbind("click").bind("click", function() {
+		var snippet = {
+			id: snippetForm.find("#eName").val(),
+			content: snippetForm.find("#eContent").val(),
+			mode: snippetForm.find("#cbMode").val(),
+			cursor: {
+				row: parseInt(snippetForm.find("#eTargetRow").val(), 10),
+				column: parseInt(snippetForm.find("#eTargetCol").val(), 10)
+			}
+		}
+
+		//validate
+		if (snippet.id.trim() === "")
+		{
+			alert("Please enter a name!");
+			snippetForm.find("#eName").focus();
+			return;
+		}
+		if (snippet.content.trim() === "")
+		{
+			alert("Please enter the content!");
+			snippetForm.find("#eContent").focus();
+			return;
+		}
+
+		iEdit.ShowProgressDialog("Save snippet...", snippet.id);
+		var data = $.extend({}, snippet);
+		data.func = "saveSnippet";
+		iEdit.callServer(data, function(data) {
+			LoadSnippets(function() {
+				iEdit.CloseProgressDialog();
+			});
+		});		
+		
+		snippetForm.slideUp("fast", function() {
+			$(iEdit.editor).focus();
+		});
+	});
+	
+	snippetForm.find("#btnNew").unbind("click").bind("click", function() {
+		snippetForm.find("#cbMode").val("");
+		snippetForm.find("#eName").val("").focus();
+		snippetForm.find("#eContent").val("");
+		snippetForm.find("#eTargetRow").val(-1);
+		snippetForm.find("#eTargetCol").val(-1);
+		
+        if (!iEdit.editor.selection.isEmpty())
+		{
+            var text = iEdit.editor.getSession().getTextRange(iEdit.editor.getSelectionRange());
+			snippetForm.find("#eContent").val(text);
+			
+		}
+	});
+
+	snippetForm.find("#eName").keypress(function(event) {
+		if (event.which == 13)
+			snippetForm.find("#btnSave").trigger("click");
+	})
+	
+	snippetForm.find("#btnCancel").unbind("click").bind("click", function() {
+		snippetForm.slideUp("fast", function() {
+			$(iEdit.editor).focus();
+		});
+	});
+	
+	snippetForm.slideDown("fast", function() {
+		snippetForm.find("#btnNew").trigger("click");
+	});
+}
+
 iEdit.uploadFileStart = function() {
 	$("#uploaderForm").slideUp("fast");
 	iEdit.ShowProgressDialog("Uploading file...", $("#uploaderForm #newfile").val());

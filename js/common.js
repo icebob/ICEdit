@@ -76,3 +76,9 @@ function ExtractFilePath(filename)
     else
         return filename.substring(0, i + 1);
 }
+
+function lastWord(str) {
+	var match = str.match(/\s*(\w+)$/g);
+	if (match && match.length > 0)
+		return match[0].trim();
+}

@@ -1,7 +1,3 @@
-/* 
-    TODO:   
-*/	
-
 function loadEditor() {
 	iEdit.editor = ace.edit("editor");
 	//editor.setTheme("ace/theme/textmate");
@@ -57,6 +53,72 @@ function loadEditor() {
 		exec: function(env, args, request) {
 			iEdit.saveAll();
 		}
+	});
+	
+	canon.addCommand({
+		name: 'SaveFile',
+		bindKey: {
+			win: 'Ctrl-Q',
+			mac: 'Command-Q',
+			sender: 'editor'
+		},
+		exec: function(env, args, request) {
+			iEdit.showSnippetForm();
+		}
+	});	
+	
+    canon.addCommand({
+		name: 'Snippet',
+		bindKey: {
+			win: 'Tab',
+			mac: 'Command-Tab',
+			sender: 'editor'
+		},
+		exec: function(env, args, request) {
+            var pos = iEdit.editor.getCursorPosition();
+            var line = iEdit.editor.getSession().doc.getLine(pos.row);
+            var s = line.substring(0, pos.column);
+			var lw = lastWord(s);
+			var mode = iEdit.editor.getSession().getMode();
+			if (lw == null || !iEdit.checkSnippets(lw, mode))
+                iEdit.editor.indent(); //https://github.com/ajaxorg/ace/blob/master/lib/ace/commands/default_commands.js#L69-78 
+		}                                        
+	});	
+	
+	/*iEdit.snippets = [
+		{
+			id: 'try', 
+			content: 'try {\n\t\n} catch(ex) {\n}',
+			mode: "JavaScriptMode",
+			cursor: {
+				row: 1,
+				column: 4
+			}
+		},
+		{
+			id: 'for', 
+			content: 'for(var i = 0; i < array.length; i++) {\n\t\n}',
+			mode: "JavaScriptMode",
+			cursor: {
+				row: 1,
+				column: 4
+			}
+		}
+	];*/
+}
+
+function LoadSnippets(callback) {
+	iEdit.callServer({
+		"func": "getSnippets"
+	}, function(data) {
+		if (data != "")
+		{
+			iEdit.snippets = jQuery.parseJSON(data);
+		} else {
+			iEdit.snippets = [];
+		}
+		if (callback)
+			callback();
 	});
 }
 
@@ -141,7 +203,7 @@ function loadTabs() {
 				
 			iEdit.loadingTab = true;
 			var file = newTab.file;
-			var lastRow = file.cursor?file.cursor.row:0;
+			//var lastRow = file.cursor?file.cursor.row:0;
 			var lastScrollTop = file.scrollTop?file.scrollTop:0;
 			var oldState = file.changed;
 			
@@ -151,7 +213,10 @@ function loadTabs() {
 			iEdit.editor.setReadOnly(false);
 			iEdit.editor.focus();
 			
-			iEdit.editor.gotoLine(lastRow + 1);
+			if (file.cursor)
+				iEdit.editor.moveCursorTo(file.cursor.row, file.cursor.column);
+
+			//iEdit.editor.gotoLine(lastRow + 1);
 			if (lastScrollTop != 0)
 				iEdit.editor.renderer.scrollToRow(lastScrollTop);
 
@@ -220,6 +285,7 @@ $(document).ready(function() {
 	loadFileBrowser();
 	loadFileController();
 	loadTabs();
+	LoadSnippets();
 
 	if (hasStorage)
 	{

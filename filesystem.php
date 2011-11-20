@@ -60,6 +60,9 @@
 			case "rename": RenameFileFolder(); break;
 			case "delete": DeleteFileFolder(); break;
 		
+			case "getSnippets": GetSnippets(); break;
+			case "saveSnippet": SaveSnippet(); break;
+			case "deleteSnippet": DeleteSnippet(); break;
 		}
 	}
 
@@ -381,4 +384,85 @@
 		$modTime = date(DATE_RFC822, filemtime($fullpath));
 		return "Size: " .  sprintf("%01.1f", $size) . "K\nModified: " . $modTime;
 	}
+
+	function GetSnippets() {
+		$fName = dirname(__FILE__) . DS . "snippets.dat";
+		if (file_exists($fName))
+		{
+			$snippets = file_get_contents($fName);
+			
+			echo $snippets;
+		}
+	}
+	
+	function SaveSnippet() {
+		if (isset($_POST["id"]) && isset($_POST["content"]))
+		{
+			$fName = dirname(__FILE__) . DS . "snippets.dat";
+			if (file_exists($fName))
+			{
+				$snippets = json_decode(file_get_contents($fName), true);
+			} else {
+				$snippets = array();
+			}
+			
+			
+			$snip = null;
+			for($i = 0; $i < count($snippets); $i++)
+			{
+				if ($snippets[$i]["id"] == $_POST["id"] && $snippets[$i]["mode"] == $_POST["mode"])
+				{
+					$snip = &$snippets[$i];
+					break;
+				}
+			}
+			if (isset($snip))
+			{
+				$snip["id"] = $_POST["id"];
+				$snip["content"] = $_POST["content"];
+				$snip["mode"] = $_POST["mode"];
+				$snip["cursor"] = array(
+						"row" => $_POST["cursor"]["row"],
+						"column" => $_POST["cursor"]["column"]);
+			
+			} else {
+				$snippets[] = array(
+					"id" => $_POST["id"],
+					"content" => $_POST["content"],
+					"mode" => $_POST["mode"],
+					"cursor" => array(
+						"row" => $_POST["cursor"]["row"],
+						"column" => $_POST["cursor"]["column"])
+				);
+			}
+			if (file_put_contents($fName, json_encode($snippets)) === false)
+				echo json_encode(array("result" => "ERROR", "message" => "File write error!"));
+			else
+				echo json_encode(array("result" => "OK"));
+		}	
+	}
+	
+	function DeleteSnippet() {
+		if (isset($_POST["id"]) && isset($_POST["mode"]))
+		{
+			$fName = dirname(__FILE__) . DS . "snippets.dat";
+			if (file_exists($fName))
+			{
+				$snippets = json_decode(file_get_contents($fName), true);
+				$newSnippets = array();
+				
+				for($i = 0; $i < count($snippets); $i++)
+				{
+					if (!($snippets[$i]["id"] == $_POST["id"] && $snippets[$i]["mode"] == $_POST["mode"]))
+						$newSnippets[] = $snippets[$i];
+				}
+				
+				if (file_put_contents($fName, json_encode($newSnippets)) === false)
+					echo json_encode(array("result" => "ERROR", "message" => "File write error!"));
+				else
+					echo json_encode(array("result" => "OK"));
+				
+			}
+		}
+	}		
 ?>
