@@ -84,27 +84,6 @@ function loadEditor() {
                 iEdit.editor.indent(); //https://github.com/ajaxorg/ace/blob/master/lib/ace/commands/default_commands.js#L69-78 
 		}                                        
 	});	
-	
-	/*iEdit.snippets = [
-		{
-			id: 'try', 
-			content: 'try {\n\t\n} catch(ex) {\n}',
-			mode: "JavaScriptMode",
-			cursor: {
-				row: 1,
-				column: 4
-			}
-		},
-		{
-			id: 'for', 
-			content: 'for(var i = 0; i < array.length; i++) {\n\t\n}',
-			mode: "JavaScriptMode",
-			cursor: {
-				row: 1,
-				column: 4
-			}
-		}
-	];*/
 }
 
 function LoadSnippets(callback) {
@@ -221,7 +200,7 @@ function loadTabs() {
 				iEdit.editor.renderer.scrollToRow(lastScrollTop);
 
 			iEdit.fileChanged(iEdit.tabs.selectedTab, oldState);
-			iEdit.storage.setObject('activeTab', newTab.id);			
+			iEdit.storage.setObject('iEdit_activeTab', newTab.id);			
 			iEdit.loadingTab = false;
 		},
 		onclosable: function(tab) {
@@ -252,16 +231,17 @@ function loadTabs() {
 			var menu2 = $.contextMenu.separator;
 			var menu3 = {'Open in browser': { onclick: function(menuItem,menu) { iEdit.openInBrowser(tab.file.path); }, icon: ""  } };
 			var menu4 = {'Reload': { onclick: function(menuItem,menu) { iEdit.reloadFile(tab.file.path); }, icon: "images/reload_icon.png"  } };
-			var menu5 = $.contextMenu.separator;
-			var menu6 = {'Close tab': { onclick: function(menuItem,menu) { iEdit.tabs.closeTab(tab);  }, icon: ""  } };
-			var menu7 = {'Close all tabs': { onclick: function(menuItem,menu) { iEdit.tabs.closeAllTabs(false); }, icon: ""  } };
-			var menu8 = {'Close other tabs': { onclick: function(menuItem,menu) { iEdit.tabs.closeAllTabs(false, tab); }, icon: ""  } };
-			var menu9 = $.contextMenu.separator;
-			var menu10 = {'Save': { onclick: function(menuItem,menu) { iEdit.saveFile(iEdit.tabs.selectedTab.file.path); }, icon: "images/save_icon.png"  } };
-			var menu11 = {'Save as': { onclick: function(menuItem,menu) { iEdit.saveAsFile(iEdit.tabs.selectedTab.file.path); }, icon: "images/save_as_icon.png"  } };
-			var menu12 = {'Save all': { onclick: function(menuItem,menu) { iEdit.saveAll(); }, icon: "images/save_icon.png"  } };
+			var menu5 = {'Reload all': { onclick: function(menuItem,menu) { iEdit.reloadAllFile(); }, icon: "images/reload_icon.png"  } };
+			var menu6 = $.contextMenu.separator;
+			var menu7 = {'Close tab': { onclick: function(menuItem,menu) { iEdit.tabs.closeTab(tab);  }, icon: ""  } };
+			var menu8 = {'Close all tabs': { onclick: function(menuItem,menu) { iEdit.tabs.closeAllTabs(false); }, icon: ""  } };
+			var menu9 = {'Close other tabs': { onclick: function(menuItem,menu) { iEdit.tabs.closeAllTabs(false, tab); }, icon: ""  } };
+			var menu10 = $.contextMenu.separator;
+			var menu11 = {'Save': { onclick: function(menuItem,menu) { iEdit.saveFile(iEdit.tabs.selectedTab.file.path); }, icon: "images/save_icon.png"  } };
+			var menu12 = {'Save as': { onclick: function(menuItem,menu) { iEdit.saveAsFile(iEdit.tabs.selectedTab.file.path); }, icon: "images/save_as_icon.png"  } };
+			var menu13 = {'Save all': { onclick: function(menuItem,menu) { iEdit.saveAll(); }, icon: "images/save_icon.png"  } };
 			
-			return [menu1, menu2, menu3, menu4, menu5, menu6, menu7, menu8, menu9, menu10, menu11, menu12];
+			return [menu1, menu2, menu3, menu4, menu5, menu6, menu7, menu8, menu9, menu10, menu11, menu12, menu13];
 		} else return null;
 	}, {theme:'vista',shadow:false, offsetX:5, offsetY: 2}
 	);	

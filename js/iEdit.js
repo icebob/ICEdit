@@ -314,6 +314,24 @@ iEdit.reloadFile = function(hoverFile) {
 	}
 };
 
+iEdit.reloadAllFile = function() {
+	if (iEdit.tabs.items.length > 0 && confirm("Do you want to reload all files?"))
+	{
+		var files = [];
+		$.each(iEdit.tabs.items, function(i, item) {
+			files.push(item.file.path);
+		});
+		iEdit.tabs.closeAllTabs(true);
+		
+		$.each(files, function(i, path) {
+			iEdit.LoadFile(path, function(file) {
+				iEdit.saveToStorage(file);
+			});
+		});
+	}
+};
+
+
 iEdit.openInBrowser = function(hoverFile) {
 	var treeItem = null;
 	if (typeof(hoverFile) == "string")
@@ -482,7 +500,7 @@ iEdit.loadStateFromStorage = function() {
 		for(var i = 0; i< localStorage.length; i++)
 		{
 			var key = localStorage.key(i);
-			if (key != "activeTab")
+			if (key != "iEdit_activeTab")
 			{
 			    if (key.substr(0, 6) === "iEdit.")
 			    {
@@ -500,7 +518,13 @@ iEdit.loadStateFromStorage = function() {
 				activeTab = iEdit.storage.getObject(key);
 			
 		}
-		iEdit.storage.clear();
+		// iEdit.storage.clear(); helyette csak a sajátokat törölje
+		for(var i = localStorage.length - 1; i >= 0; i--)
+		{
+			if (key == "iEdit_activeTab" || key.substr(0, 6) === "iEdit.")
+			  iEdit.storage.removeObject(key);
+		}
+		
 		$.each(preFiles, function(i, item) {
 			iEdit.LoadFileFromStorage(item, true);
 		});
